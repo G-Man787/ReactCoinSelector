@@ -79,6 +79,7 @@ function Dollar() {
       </button>
 
       {breakdown.length > 0 && (
+        
         <ul style={{ marginTop: '1rem' }}>
           {breakdown.map((coin, index) => (
             <li key={index}>
