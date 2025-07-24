@@ -12,6 +12,7 @@ const COINS = [
 function Dollar() {
   const [amount, setAmount] = useState('');
   const [breakdown, setBreakdown] = useState([]);
+  const [selectedCoins, setSelectedCoins] = useState([]);
 
   const calculateCoins = () => {
     let cents = Math.round(parseFloat(amount) * 100); // convert to cents
@@ -24,11 +25,31 @@ function Dollar() {
         cents %= coin.value;
       }
     }
+
     setBreakdown(result);
   };
+  const handleCostChange = (e) => {
+    const inputValue = parseFloat(e.target.value);
 
+    setAmount(inputValue);
+
+    let remaining = inputValue*100;
+    const selected = [];
+
+    for (let coin of COINS) {
+      if (remaining >= coin.value) {
+        selected.push(coin.name);
+        remaining =remaining%coin.value;
+      }
+    }
+
+    setSelectedCoins(selected);
+    console.log(selectedCoins);
+  };
+  
+  const isChecked = (coinName) => selectedCoins.includes(coinName);
   return (
-    <div style={{ color:'white',maxWidth: '500px', margin: '2rem auto', padding: '1rem' ,backgroundColor:'black'}}>
+    <div style={{color:'white',maxWidth: '400px', margin: '2rem auto', padding: '1rem', backgroundColor:'black' }}>
       <h2>🪙 Coin Breakdown</h2>
 
       <input
@@ -36,11 +57,24 @@ function Dollar() {
         step="0.01"
         placeholder="Enter amount (e.g. 1.37)"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        onChange={ handleCostChange}
         style={{ width: '90%', padding: '0.5rem' }}
       />
-
-      <button onClick={calculateCoins} style={{ marginTop: '1rem', backgroundColor:'lightskyblue'}}>
+    <ul style={{ listStyle: 'none', paddingTop: '1rem' }}>
+        {COINS.map((coin) => (
+          <li key={coin.name}>
+            <label>
+              <input
+                type="checkbox"
+                checked={isChecked(coin.name)}
+                readOnly
+              />
+              {coin.name} ({coin.value}¢)
+            </label>
+          </li>
+        ))}
+      </ul>
+      <button onClick={calculateCoins} style={{ marginTop: '1rem', backgroundColor:'Highlight'}}>
         Calculate
       </button>
 
